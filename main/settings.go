@@ -6,7 +6,7 @@ type Setting struct {
 	ErrorDiscordHookURI string
 
 	FilePath   string
-	UploadTime struct {
+	UploadTime []struct {
 		Hour   int
 		Minute int
 	}

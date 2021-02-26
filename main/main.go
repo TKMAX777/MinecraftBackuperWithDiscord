@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"../discord"
-	"../zip"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/drive/v3"
@@ -86,46 +85,12 @@ func main() {
 	var t time.Time
 	for {
 		t = time.Now()
-		if t.Hour() == Settings.UploadTime.Hour &&
-			t.Minute() == Settings.UploadTime.Minute {
-			backup()
+		for _, ut := range Settings.UploadTime {
+			if t.Hour() == ut.Hour && t.Minute() == ut.Minute {
+				backup()
+			}
 		}
+
 		time.Sleep(time.Minute)
 	}
-}
-
-func backup() {
-	var err error
-	var currentTime = time.Now()
-
-	err = zip.Compress(TemporaryArchvePath, Settings.FilePath)
-	if err != nil {
-		ErrorHandle(err, "Compress")
-		return
-	}
-
-	f, err := os.Open(TemporaryArchvePath)
-	if err != nil {
-		ErrorHandle(err, "Opening temporary archive file")
-		return
-	}
-	defer f.Close()
-
-	var newFileInfo = &drive.File{
-		Name: fmt.Sprintf(
-			"WorldData_%04d/%02d/%02d",
-			currentTime.Year(),
-			currentTime.Month(),
-			currentTime.Day(),
-		),
-		Parents:     []string{Settings.DriveParentDir},
-		Description: "World backup data",
-	}
-
-	var uploadedFileInfo *drive.File
-	uploadedFileInfo, err = Drive.Files.Create(newFileInfo).Media(f).Do()
-
-	os.Remove(TemporaryArchvePath)
-
-	Discord.SendMessage(makeSendMessage(uploadedFileInfo))
 }

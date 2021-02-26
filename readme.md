@@ -21,10 +21,12 @@ GoogleDriveにディレクトリを毎日バックアップしつつ、その進
 {
     "DiscordHookURI": "https://discord.com/api/webhooks/****",
     "FilePath": "/path/to/minecraft/world/dir",
-    "UploadTime": {
-        "Hour": 4,
-        "Minute": 0
-    },
+    "UploadTime": [
+        {
+            "Hour": 4,
+            "Minute": 0
+        }
+    ],
     "DriveParentDir": "Google Drive ParentDir's ID",
     "MessageInfo": {
         "AvaterURI": "",
